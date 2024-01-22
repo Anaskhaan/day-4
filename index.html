@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      select {
+        width: 200px;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <label for="country">Country:</label>
+      <select id="country" onchange="updateStates()">
+        <option value="">Select Country</option>
+        <option value="pak">Pakistan</option>
+        <option value="ind">India</option>
+        <option value="chi">China</option>
+      </select>
+
+      <br />
+
+      <label for="state">State:</label>
+      <select id="state" onchange="updateCities()"></select>
+
+      <br />
+
+      <label for="city">City:</label>
+      <select id="city"></select>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
