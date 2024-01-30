@@ -1,124 +1,85 @@
-let countries = [
-  { code: "pak", name: "Pakistan" },
-  { code: "ind", name: "India" },
-  { code: "chi", name: "China" },
-];
-
-let states = {
-  pak: [
-    { code: "kpk", name: "Khyber Pakhtunakhwa" },
-    { code: "pun", name: "Punjab" },
-    { code: "sin", name: "Sindh" },
-  ],
-  ind: [
-    { code: "asm", name: "Assam" },
-    { code: "go", name: "Goa" },
-    { code: "hp", name: "Himachal Pradesh" },
-  ],
-  chi: [
-    { code: "si", name: "Sichuan" },
-    { code: "gn", name: "Gansu" },
-    { code: "hu", name: "Hunan" },
-  ],
-};
-
-let cities = {
-  kpk: [
-    { code: "pes", name: "Peshawar" },
-    { code: "abt", name: "Abbottabad" },
-    { code: "ma", name: "Mardan" },
-  ],
-  pun: [
-    { code: "la", name: "Lahore" },
-    { code: "gw", name: "Gujranwala" },
-    { code: "bw", name: "Bahawalpur" },
-  ],
-  sin: [
-    { code: "ka", name: "Karachi" },
-    { code: "lk", name: "Larkana" },
-    { code: "gt", name: "Gotki" },
-  ],
-  asm: [
-    { code: "te", name: "Tezpur" },
-    { code: "jo", name: "Jorhat" },
-    { code: "ti", name: "Tinsukia" },
-  ],
-  go: [
-    { code: "pa", name: "Panaji" },
-    { code: "ma", name: "Mapusa" },
-    { code: "po", name: "Ponda" },
-  ],
-  hp: [
-    { code: "ds", name: "Dharamshala" },
-    { code: "ch", name: "Chamba" },
-    { code: "ms", name: "Manali" },
-  ],
-  si: [
-    { code: "le", name: "Leshan" },
-    { code: "zi", name: "Zigong" },
-    { code: "me", name: "Meishan" },
-  ],
-  gn: [
-    { code: "ln", name: "Lanzhou" },
-    { code: "lg", name: "Longnan" },
-    { code: "hz", name: "Hezuo" },
-  ],
-  hu: [
-    { code: "cg", name: "Changsha" },
-    { code: "cn", name: "Changde" },
-    { code: "yz", name: "Yongzhou" },
-  ],
-};
-
-// Function to populate states based on the selected country
-function updateStates() {
-  let countrySelect = document.getElementById("country");
-  let stateSelect = document.getElementById("state");
-  let citySelect = document.getElementById("city");
-
-  // Clear existing options
-  stateSelect.innerHTML = "";
-  citySelect.innerHTML = "";
-
-  // Get selected country
-  let selectedCountry = countrySelect.value;
-
-  // If no country is selected, do nothing
-  if (!selectedCountry) {
-    return;
+// Ball class
+class Ball {
+  constructor(x, y, radius, color) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.dx = Math.random() * 2 + 1; // X-axis speed
+    this.dy = Math.random() * 2 + 1; // Y-axis speed
   }
 
-  // Add states based on the selected country
-  states[selectedCountry].forEach(function (state) {
-    let option = document.createElement("option");
-    option.value = state.code;
-    option.text = state.name;
-    stateSelect.add(option);
-  });
+  draw(context) {
+    context.beginPath();
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    context.fillStyle = this.color;
+    context.fill();
+    context.closePath();
+  }
 
-  // Trigger the update for cities based on the selected state
-  updateCities();
+  update(canvas) {
+    // Update ball position
+    this.x += this.dx;
+    this.y += this.dy;
+
+    // Bounce off the canvas boundaries
+    if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+      this.dx = -this.dx;
+      this.changeColor();
+    }
+
+    if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) {
+      this.dy = -this.dy;
+      this.changeColor();
+    }
+  }
+
+  changeColor() {
+    // Generate a random color
+    this.color = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
+      Math.random() * 255
+    })`;
+  }
 }
 
-// Function to populate cities based on the selected state
-function updateCities() {
-  let stateSelect = document.getElementById("state");
-  let citySelect = document.getElementById("city");
+// Initialize canvas
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
-  // Clear existing options
-  citySelect.innerHTML = "";
+// Set canvas size to cover the entire window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  // Get selected state
-  let selectedState = stateSelect.value;
+// Array to store balls
+const balls = [];
 
-  // Add cities based on the selected state
-  cities[selectedState].forEach(function (city) {
-    let option = document.createElement("option");
-    option.value = city.code;
-    option.text = city.name;
-    citySelect.add(option);
+// Function to handle click event and add a new ball
+canvas.addEventListener("click", (event) => {
+  const newBall = new Ball(
+    event.clientX,
+    event.clientY,
+    20,
+    `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
+      Math.random() * 255
+    })`
+  );
+  balls.push(newBall);
+});
+
+// Animation loop
+function animate() {
+  // Clear the canvas
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw each ball
+  balls.forEach((ball) => {
+    ball.update(canvas);
+    ball.draw(context);
   });
+
+  // Request next animation frame
+  requestAnimationFrame(animate);
 }
 
-// Initial setup
-updateStates();
+// Start the animation loop
+animate();
